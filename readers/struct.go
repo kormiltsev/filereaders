@@ -1,18 +1,5 @@
 package readers
 
-import "time"
-
-type MiwatchSleepCSV struct {
-	ID             int
-	DateToday      time.Time
-	StartPeriodInt int
-	StartPeriod    time.Time
-	EndPeriodInt   int
-	EndPeriod      time.Time
-	Dreams         string
-	PeriodDuration int
-}
-
 // Засыпание;Засыпание;Пробуждение;Пробуждение;Тип сна;Минуты сна
 var MiwatchSleepCSVNames = []string{
 	"Засыпание",
@@ -22,9 +9,26 @@ var MiwatchSleepCSVNames = []string{
 	"Тип сна",
 	"Минуты сна",
 }
-var MiWatchSleep = InterfaceMiwatchSleepCSV{
+var MiWatchSleep = InterfaceCSV{
 	Name:        "MiWatchSleepCSV",
 	Directory:   "./data/miwatch/sleep/*.csv",
 	CSVdevider:  ';',
 	ColumnNames: MiwatchSleepCSVNames,
+	Files:       nil,
+	Rows:        nil,
+	FileStatus:  nil,
+	Err:         nil,
 }
+
+type InterfaceCSV struct {
+	Name        string
+	Directory   string
+	CSVdevider  rune
+	ColumnNames []string
+	Files       []string
+	Rows        [][]string //MiwatchSleepCSV
+	FileStatus  []string
+	Err         []string
+}
+
+// =================================================================
