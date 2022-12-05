@@ -8,16 +8,32 @@ import (
 )
 
 // fdir := "./data/*.json"
+// main struct ==============================
+type InterfaceCSV struct {
+	Settings   *CSVset
+	Files      []string
+	Rows       [][]string
+	FileStatus []string
+	Err        []string
+}
+type CSVset struct {
+	Name        string   `json:"name_csv"`
+	Directory   string   `json:"directory_csv"`
+	CSVdevider  rune     `json:"csv_devider"`
+	ColumnNames []string `json:"column_names"`
+	TimeZone    string   `json:"timezone"`
+}
 
-func (c *InterfaceCSV) Read() {
+// ===========================================
+func Read(c *InterfaceCSV) {
 	var err error
-	c.Files, err = FileLister(c.Directory)
+	c.Files, err = FileLister(c.Settings.Directory)
 	if err != nil {
-		c.Err = append(c.Err, fmt.Sprintf("ERR CSV %s, DIRECTORY=%s", err, c.Directory))
+		c.Err = append(c.Err, fmt.Sprintf("ERR CSV %s, DIRECTORY=%s", err, c.Settings.Directory))
 		return
 	}
 	for _, fileadr := range c.Files {
-		data, err := FileReaderCSV(fileadr, c.CSVdevider)
+		data, err := FileReaderCSV(fileadr, c.Settings.CSVdevider)
 		if err != nil {
 			c.Err = append(c.Err, fmt.Sprintf("ERR CSV %s, FILE=%s", err, fileadr))
 			continue
@@ -27,7 +43,7 @@ func (c *InterfaceCSV) Read() {
 			continue
 		}
 		for i, t := range data[0] {
-			if t != c.ColumnNames[i] {
+			if t != c.Settings.ColumnNames[i] {
 				c.Err = append(c.Err, fmt.Sprintf("ERR wrong column names in file %s", fileadr))
 				continue
 			}

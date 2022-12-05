@@ -1,0 +1,23 @@
+{
+  "PG": null,
+  "CSV": [
+    {
+      "name_csv": "MiWatchSleepCSV",
+      "directory_csv": "./data/miwatch/sleep/*.csv",
+      "csv_devider": 59,
+      "column_names": [
+        "Засыпание",
+        "Засыпание",
+        "Пробуждение",
+        "Пробуждение",
+        "Тип сна",
+        "Минуты сна"
+      ],
+      "timezone": "Europe/Moscow",
+      "Files": null,
+      "Rows": null,
+      "FileStatus": null,
+      "Err": null
+    }
+  ]
+}
