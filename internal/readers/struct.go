@@ -14,6 +14,7 @@ var MiWatchSleep = InterfaceCSV{
 	Directory:   "./data/miwatch/sleep/*.csv",
 	CSVdevider:  ';',
 	ColumnNames: MiwatchSleepCSVNames,
+	TimeZone:    "Europe/Moscow",
 	Files:       nil,
 	Rows:        nil,
 	FileStatus:  nil,
@@ -25,6 +26,7 @@ type InterfaceCSV struct {
 	Directory   string
 	CSVdevider  rune
 	ColumnNames []string
+	TimeZone    string
 	Files       []string
 	Rows        [][]string //MiwatchSleepCSV
 	FileStatus  []string
