@@ -73,3 +73,11 @@ func CreateSettingsJson(s *Settingos) error {
 	}
 	return nil
 }
+
+func Start() error {
+	return storage.ConnectDB()
+}
+
+func Finish() {
+	storage.CloseDB()
+}

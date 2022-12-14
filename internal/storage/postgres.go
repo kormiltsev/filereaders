@@ -1,7 +1,11 @@
 package storage
 
 import (
+	"encoding/json"
+	"io"
 	"log"
+	"os"
+	"sort"
 	"time"
 
 	"github.com/go-pg/pg"
@@ -92,15 +96,71 @@ type PGWriter interface {
 	AddIfNotExist()
 }
 
+type PGbase struct {
+	MiwatchSleep []MiwatchSleepRow
+	MiwatchHrRow []MiwatchHrRow
+}
+
+var Catalog = PGbase{
+	MiwatchSleep: make([]MiwatchSleepRow, 0, 100),
+	MiwatchHrRow: make([]MiwatchHrRow, 0, 100),
+}
+
 func (row *MiwatchSleepRow) AddIfNotExist() {
-	log.Println("PG toucghed", row.StartPeriodInt)
+
+	Catalog.MiwatchSleep = append(Catalog.MiwatchSleep, *row)
+	//log.Println("PG toucghed", row.StartPeriodInt)
 	// _, err := db.Model(row).
 	// 	Where("start_period_int = ?", row.StartPeriodInt).
 	// 	OnConflict("DO NOTHING"). // optional
 	// 	SelectOrInsert()
 }
 func (row *MiwatchHrRow) AddIfNotExist() {
-	log.Printf("Date: %d, HR: %d", row.EventTimeInt, row.Heartrate)
+	//log.Printf("Date: %d, HR: %d", row.EventTimeInt, row.Heartrate)
+	Catalog.MiwatchHrRow = append(Catalog.MiwatchHrRow, *row)
+
+}
+
+func ConnectDB() error {
+	file := "data/Catalog.json"
+	f, err := os.OpenFile(file, os.O_CREATE|os.O_RDONLY, 0777)
+	if err != nil {
+		log.Println("not open file ", file, err)
+		return err
+	}
+	err = json.NewDecoder(f).Decode(&Catalog)
+	if err == io.EOF {
+		log.Println("New Catalog.json created")
+		return nil
+	}
+	if err != nil {
+		log.Println("cand decode from json", err)
+		return err
+	}
+	return nil
+}
+
+func CloseDB() {
+	sort.Slice(Catalog.MiwatchHrRow, func(i, j int) bool {
+		return Catalog.MiwatchHrRow[i].EventTimeInt > Catalog.MiwatchHrRow[j].EventTimeInt
+	})
+	sort.Slice(Catalog.MiwatchSleep, func(i, j int) bool {
+		return Catalog.MiwatchSleep[i].StartPeriodInt > Catalog.MiwatchSleep[j].StartPeriodInt
+	})
+
+	file := "data/Catalog.json"
+	f, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY, 0777) //os.O_APPEND|
+	if err != nil {
+		log.Println("not open file ", file, err)
+		return
+	}
+	enc := json.NewEncoder(f)
+	enc.SetIndent("", " ")
+	enc.Encode(&Catalog)
+	if err != nil {
+		log.Println("cand encode to json", err)
+		return
+	}
 }
 
 // func PgQueryPOSTorSelect(row *PostgresLink) {
@@ -119,3 +179,11 @@ func (row *MiwatchHrRow) AddIfNotExist() {
 // func PgDBClose() {
 // 	db.Close()
 // }
+
+func SendCatalog(n int) *PGbase {
+
+	return &PGbase{
+		MiwatchSleep: Catalog.MiwatchSleep[:n],
+		MiwatchHrRow: Catalog.MiwatchHrRow[:n],
+	}
+}

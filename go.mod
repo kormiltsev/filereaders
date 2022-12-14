@@ -2,7 +2,10 @@ module github.com/kormiltsev/filereaders
 
 go 1.19
 
-require github.com/go-pg/pg v8.0.7+incompatible
+require (
+	github.com/go-echarts/go-echarts/v2 v2.2.4
+	github.com/go-pg/pg v8.0.7+incompatible
+)
 
 require (
 	github.com/jinzhu/inflection v1.0.0 // indirect

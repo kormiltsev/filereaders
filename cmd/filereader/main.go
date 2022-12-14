@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/kormiltsev/filereaders/internal/app"
 )
 
@@ -17,10 +19,15 @@ func main() {
 
 	// files
 
-	// a := app.MiWatchSleep
-	// a.Do()
-
-	a := app.MiWatchHr
+	if app.Start() != nil {
+		log.Println("STOPPED")
+		return
+	}
+	a := app.MiWatchSleep
 	a.Do()
 
+	b := app.MiWatchHr
+	b.Do()
+
+	app.Finish()
 }
