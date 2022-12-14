@@ -17,7 +17,10 @@ func main() {
 
 	// files
 
-	a := app.MiWatchSleep
+	// a := app.MiWatchSleep
+	// a.Do()
+
+	a := app.MiWatchHr
 	a.Do()
 
 }

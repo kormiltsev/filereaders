@@ -6,13 +6,14 @@ import (
 	"time"
 
 	"github.com/kormiltsev/filereaders/internal/readers"
+	"github.com/kormiltsev/filereaders/internal/storage"
 )
 
 // main struct =================================================
 type MiWatchSleepStruct struct {
 	ToDo   bool
 	Reader *readers.InterfaceCSV
-	PG     []MiwatchSleepRow
+	PG     []storage.MiwatchSleepRow // большой массив, а нужен ли он?? указатели не катят, работаю в одной переменной
 }
 
 var MiWatchSleep = MiWatchSleepStruct{
@@ -47,18 +48,6 @@ var MiWatchSleepCSV = readers.InterfaceCSV{
 	Err:        nil,
 }
 
-// pg =============================================================
-type MiwatchSleepRow struct {
-	ID             int
-	DateToday      time.Time
-	StartPeriodInt int
-	StartPeriod    time.Time
-	EndPeriodInt   int
-	EndPeriod      time.Time
-	Dreams         string
-	PeriodDuration int
-}
-
 // type MiwatchSleepCSVs struct {
 // 	Name string
 // 	Rows []MiwatchSleep
@@ -75,7 +64,7 @@ func (w *MiWatchSleepStruct) Do() {
 	readers.Read(w.Reader)
 	log.Println("readers complete")
 	var err error
-	var row MiwatchSleepRow
+	row := storage.NewMiwatchSleepRow()
 	loc, _ := time.LoadLocation(w.Reader.Settings.TimeZone)
 	for _, line := range w.Reader.Rows {
 		row.DateToday = time.Now()
@@ -104,7 +93,7 @@ func (w *MiWatchSleepStruct) Do() {
 		if err != nil {
 			log.Println("Wrong int minutes period type in column[5] ", w.Reader.Settings.Name)
 		}
-		w.PG = append(w.PG, row)
+		w.PG = append(w.PG, *row)
 		// go PG
 		row.AddIfNotExist()
 

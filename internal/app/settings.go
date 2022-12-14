@@ -14,11 +14,13 @@ import (
 type Settingos struct {
 	PG           *storage.PGconfig
 	MiWatchSleep *readers.CSVset
+	MiWatchHr    *readers.CSVset
 }
 
 var Settings = Settingos{
 	PG:           &storage.Stcon,
 	MiWatchSleep: &Miwatchsleepset,
+	MiWatchHr:    &Miwatchhrset,
 }
 
 // func GetSettings() error {

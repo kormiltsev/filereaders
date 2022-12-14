@@ -2,10 +2,10 @@ package storage
 
 import (
 	"log"
+	"time"
 
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
-	"github.com/kormiltsev/filereaders/internal/app"
 )
 
 var db *pg.DB
@@ -24,23 +24,47 @@ var Stcon = PGconfig{
 	Database: "postgres",
 }
 
-func PGconfigs() *PGconfig {
-	return &Stcon
-}
-func PgStartConnection(set *app.Settingos) string {
+func PgStartConnection() string {
 	db = pg.Connect(&pg.Options{
-		Addr:     set.Adress,
-		User:     set.User,
-		Password: set.Password,
-		Database: set.DB,
+		Addr:     Stcon.Addr,
+		User:     Stcon.User,
+		Password: Stcon.Password,
+		Database: Stcon.Database,
 	})
 	PgCreateTable()
 	return "Postgres connected"
 }
 
+// miwatchsleep =============================================================
+type MiwatchSleepRow struct {
+	ID             uint64
+	DateToday      time.Time
+	StartPeriodInt int
+	StartPeriod    time.Time
+	EndPeriodInt   int
+	EndPeriod      time.Time
+	Dreams         string
+	PeriodDuration int
+} //============================
+
+// miwatchhr ============================================================//Пульс;Метка времени;Дата;Время=
+type MiwatchHrRow struct {
+	ID           uint64
+	DateToday    time.Time
+	EventTimeInt int
+	EventTime    time.Time
+	Heartrate    int
+} //=============================
+
+func NewMiwatchSleepRow() *MiwatchSleepRow {
+	return &MiwatchSleepRow{}
+}
+func NewMiwatchHrRow() *MiwatchHrRow {
+	return &MiwatchHrRow{}
+}
 func PgCreateTable() {
 	// miwatch sleep csv
-	var pglink app.PGMiwatchSleep
+	var pglink MiwatchSleepRow
 	err := db.CreateTable(&pglink, &orm.CreateTableOptions{
 		Temp:          false,
 		IfNotExists:   true,
@@ -68,12 +92,15 @@ type PGWriter interface {
 	AddIfNotExist()
 }
 
-func (row *app.MiwatchSleepRow) AddIfNotExist() {
+func (row *MiwatchSleepRow) AddIfNotExist() {
 	log.Println("PG toucghed", row.StartPeriodInt)
 	// _, err := db.Model(row).
 	// 	Where("start_period_int = ?", row.StartPeriodInt).
 	// 	OnConflict("DO NOTHING"). // optional
 	// 	SelectOrInsert()
+}
+func (row *MiwatchHrRow) AddIfNotExist() {
+	log.Printf("Date: %d, HR: %d", row.EventTimeInt, row.Heartrate)
 }
 
 // func PgQueryPOSTorSelect(row *PostgresLink) {
