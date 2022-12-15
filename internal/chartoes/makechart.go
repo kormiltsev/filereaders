@@ -37,7 +37,7 @@ var heartrateChart = GetChart{
 	Subtitle: "noname",
 	X:        []string{"1", "2", "3", "4"},
 	CatA:     []int{62, 67, 64, 62},
-	CatB:     []int{100, 104, 0, 93},
+	CatB:     []int{100, 104, 110, 93},
 	CatC:     []int{65, 65, 65, 65},
 }
 
