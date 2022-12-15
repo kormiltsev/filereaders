@@ -4,9 +4,8 @@ import (
 	"math/rand"
 	"net/http"
 
-	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/components"
 	"github.com/go-echarts/go-echarts/v2/opts"
-	"github.com/go-echarts/go-echarts/v2/types"
 )
 
 // generate random data for line chart
@@ -18,26 +17,51 @@ func SgenerateLineItems() []opts.LineData {
 	return items
 }
 
-func httpserver(w http.ResponseWriter, _ *http.Request) {
-	// create a new line instance
-	line := charts.NewLine()
-	// set some global options like Title/Legend/ToolTip or anything else
-	line.SetGlobalOptions(
-		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
-		charts.WithTitleOpts(opts.Title{
-			Title:    "Line example in Westeros theme",
-			Subtitle: "Line chart rendered by the http server this time",
-		}))
+// func httpserver(w http.ResponseWriter, _ *http.Request) {
+// 	// create a new line instance
+// 	line := charts.NewLine()
+// 	// set some global options like Title/Legend/ToolTip or anything else
+// 	line.SetGlobalOptions(
+// 		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
+// 		charts.WithTitleOpts(opts.Title{
+// 			Title:    "Line example in Westeros theme",
+// 			Subtitle: "Line chart rendered by the http server this time",
+// 		}))
 
-	// Put data into instance
-	line.SetXAxis([]string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}).
-		AddSeries("Category A", SgenerateLineItems()).
-		AddSeries("Category B", SgenerateLineItems()).
-		SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: true}))
-	line.Render(w)
+// 	// Put data into instance
+// 	line.SetXAxis([]string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}).
+// 		AddSeries("Category A", SgenerateLineItems()).
+// 		AddSeries("Category B", SgenerateLineItems()).
+// 		SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: true}))
+// 	line.Render(w)
+// }
+
+func httpCharts(w http.ResponseWriter, _ *http.Request) {
+	B := NewSettings()
+	page := components.NewPage()
+	page.AddCharts(
+		B.HR.MakeChartLine(),
+		B.Sleep.MakeChartBar(),
+		// lineShowLabel(),
+		// lineMarkPoint(),
+		// lineSplitLine(),
+		// lineStep(),
+		// lineSmooth(),
+		// lineArea(),
+		// lineSmoothArea(),
+		// lineOverlap(),
+		// lineMulti(),
+		// lineDemo(),
+	)
+	// f, err := os.Create(c.FileName)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// page.Render(io.MultiWriter(f))
+	page.Render(w)
 }
 
-func main() {
-	http.HandleFunc("/", httpserver)
-	http.ListenAndServe(":8081", nil)
-}
+// func main() {
+// 	http.HandleFunc("/", chartoes.httpCharts)
+// 	http.ListenAndServe(":8081", nil)
+// }

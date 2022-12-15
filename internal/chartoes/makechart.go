@@ -35,10 +35,10 @@ var heartrateChart = GetChart{
 	FileName: "sample",
 	Title:    "Testet",
 	Subtitle: "noname",
-	X:        []string{"1", "2", "3"},
-	CatA:     []int{62, 67, 64},
-	CatB:     []int{100, 104, 93},
-	CatC:     []int{65, 65, 65},
+	X:        []string{"1", "2", "3", "4"},
+	CatA:     []int{62, 67, 64, 62},
+	CatB:     []int{100, 104, 0, 93},
+	CatC:     []int{65, 65, 65, 65},
 }
 
 func NewSettings() *MapOfCharts {
@@ -90,7 +90,18 @@ func (cha *GetChart) MakeChartLine() *charts.Line {
 			Title:    cha.Title,
 			Subtitle: cha.Subtitle,
 			Link:     "https://ya.ru",
-		}))
+		}),
+		charts.WithYAxisOpts(opts.YAxis{
+			Name: "Bit per min",
+			Min:  60,
+			SplitLine: &opts.SplitLine{
+				Show: false,
+			},
+		}),
+		charts.WithXAxisOpts(opts.XAxis{
+			Name: "Elements",
+		}),
+	)
 
 	// Put data into instance
 	chline.SetXAxis(cha.X).
@@ -99,7 +110,7 @@ func (cha *GetChart) MakeChartLine() *charts.Line {
 		AddSeries("Category B", generateLineItems(cha.CatB)).
 		AddSeries("Category C", generateLineItems(cha.CatC)).
 		SetSeriesOptions(
-			charts.WithLineChartOpts(opts.LineChart{Smooth: true}),
+			charts.WithLineChartOpts(opts.LineChart{Smooth: true}), //, ConnectNulls: false}),
 			charts.WithLabelOpts(opts.Label{Show: true}),
 		)
 	// Where the magic happens
