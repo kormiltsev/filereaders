@@ -1,4 +1,4 @@
-package charts
+package chartoes
 
 import (
 	"math/rand"
@@ -10,7 +10,7 @@ import (
 )
 
 // generate random data for line chart
-func generateLineItems() []opts.LineData {
+func SgenerateLineItems() []opts.LineData {
 	items := make([]opts.LineData, 0)
 	for i := 0; i < 7; i++ {
 		items = append(items, opts.LineData{Value: rand.Intn(300)})
@@ -31,8 +31,8 @@ func httpserver(w http.ResponseWriter, _ *http.Request) {
 
 	// Put data into instance
 	line.SetXAxis([]string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}).
-		AddSeries("Category A", generateLineItems()).
-		AddSeries("Category B", generateLineItems()).
+		AddSeries("Category A", SgenerateLineItems()).
+		AddSeries("Category B", SgenerateLineItems()).
 		SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: true}))
 	line.Render(w)
 }
