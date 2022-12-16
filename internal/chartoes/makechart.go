@@ -3,12 +3,13 @@ package chartoes
 import (
 	"io"
 	"os"
+	"time"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/components"
 	"github.com/go-echarts/go-echarts/v2/opts"
 	"github.com/go-echarts/go-echarts/v2/types"
-	//"github.com/kormiltsev/filereaders/internal/storage"
+	"github.com/kormiltsev/filereaders/internal/storage"
 )
 
 type GetChart struct {
@@ -39,6 +40,44 @@ var heartrateChart = GetChart{
 	CatA:     []int{62, 67, 64, 62},
 	CatB:     []int{100, 104, 110, 93},
 	CatC:     []int{65, 65, 65, 65},
+}
+
+type Periodic struct {
+	Filename        string
+	Start           time.Time
+	Fin             time.Time
+	Days            []time.Time
+	CategoriesINT   map[string][]int
+	CategoriesFLOAT map[string][]float64
+}
+
+func NewPeriodic(f string, start, fin time.Time) *Periodic {
+	ds := make([]time.Time, 0)
+	d := start
+	for d <= fin {
+
+	}
+	return &Periodic{
+		Filename:        f,
+		Start:           start,
+		Fin:             fin,
+		Days:            make([]time.Time, 0),
+		CategoriesINT:   make(map[string][]int, 0),
+		CategoriesFLOAT: make(map[string][]float64, 0),
+	}
+}
+
+func MiWatchHRChartData(b *storage.PGbase, start, fin time.Time) *GetChart {
+
+	return &GetChart{
+		FileName: "main",
+		Title:    "Heartrate. Average by day",
+		Subtitle: "Mi Watch",
+		X:        []string{"1", "2", "3", "4"},
+		CatA:     []int{62, 67, 64, 62},
+		CatB:     []int{100, 104, 110, 93},
+		CatC:     []int{65, 65, 65, 65},
+	}
 }
 
 func NewSettings() *MapOfCharts {

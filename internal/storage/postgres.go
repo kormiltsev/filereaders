@@ -43,19 +43,19 @@ func PgStartConnection() string {
 type MiwatchSleepRow struct {
 	ID             uint64
 	DateToday      time.Time
-	StartPeriodInt int
+	StartPeriodInt int64
 	StartPeriod    time.Time
-	EndPeriodInt   int
+	EndPeriodInt   int64
 	EndPeriod      time.Time
 	Dreams         string
-	PeriodDuration int
+	PeriodDuration int64
 } //============================
 
 // miwatchhr ============================================================//Пульс;Метка времени;Дата;Время=
 type MiwatchHrRow struct {
 	ID           uint64
 	DateToday    time.Time
-	EventTimeInt int
+	EventTimeInt int64
 	EventTime    time.Time
 	Heartrate    int
 } //=============================
@@ -180,10 +180,24 @@ func CloseDB() {
 // 	db.Close()
 // }
 
-func SendCatalog(n int) *PGbase {
-
-	return &PGbase{
-		MiwatchSleep: Catalog.MiwatchSleep[:n],
-		MiwatchHrRow: Catalog.MiwatchHrRow[:n],
+func SendCatalog(start, fin time.Time) *PGbase {
+	DataPeriod := PGbase{
+		MiwatchSleep: make([]MiwatchSleepRow, 0),
+		MiwatchHrRow: make([]MiwatchHrRow, 0),
 	}
+	// miwatch sleep
+	for _, v := range Catalog.MiwatchSleep {
+		// sleep counts do that date if sleep starts from 1800 day before to 1800 current date
+		if v.StartPeriod.After(start.Add(time.Duration(-6)*time.Hour)) || v.StartPeriod.Before(fin.Add(time.Duration(-6)*time.Hour)) {
+			DataPeriod.MiwatchSleep = append(DataPeriod.MiwatchSleep, v)
+		}
+	}
+	// miwatch heartrate
+	for _, v := range Catalog.MiwatchHrRow {
+		// sleep counts do that date if sleep starts from 1800 day before to 1800 current date
+		if time.Unix(v.EventTimeInt, 0).After(start) || time.Unix(v.EventTimeInt, 0).Before(fin) {
+			DataPeriod.MiwatchHrRow = append(DataPeriod.MiwatchHrRow, v)
+		}
+	}
+	return &DataPeriod
 }
